@@ -1,0 +1,30 @@
+{
+    "name": "kopaing/simplelog",
+    "description": "For record logs for every activities",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Kopaing\\SimpleLog\\": "src/"
+        },
+        "files": [
+            "src/Helpers/activity.php",
+            "src/Helpers/ActivityLogger.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "paingsoeko",
+            "email": "social.kopaing@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kopaing\\SimpleLog\\SimpleLogServiceProvider"
+            ]
+        }
+    }
+}

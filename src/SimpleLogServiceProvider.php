@@ -13,6 +13,10 @@ class SimpleLogServiceProvider extends ServiceProvider
         );
 
         $this->publishes([
+            __DIR__.'/Models/ActivityLog.php' => app_path('/Models/ActivityLog.php'),
+        ], 'models');
+
+        $this->publishes([
             __DIR__.'/config/log.php' => config_path('log.php'),
         ]);
 

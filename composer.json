@@ -2,6 +2,7 @@
     "name": "kopaing/simplelog",
     "description": "For record logs for every activities",
     "type": "library",
+    "version": "1.2.1",
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -15,7 +16,7 @@
     "authors": [
         {
             "name": "paingsoeko",
-            "email": "social.kopaing@gmail.com"
+            "email": "dev.kopaing@gmail.com"
         }
     ],
     "minimum-stability": "dev",

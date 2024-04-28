@@ -2,6 +2,7 @@
 
 namespace Kopaing\SimpleLog\Helpers;
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Kopaing\SimpleLog\Models\ActivityLog;
@@ -141,6 +142,18 @@ class ActivityLogger
         }
 
         return $query->first();
+    }
+
+
+   /**
+     * Purge old activity logs.
+     *
+     * @return int The exit code returned by the Artisan command
+     */
+    public function purgeOldLogs()
+    {
+        // Call the 'simplelog:purge' command using Artisan
+        return Artisan::call('simplelog:purge');
     }
 
 }

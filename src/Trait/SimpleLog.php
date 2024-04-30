@@ -2,11 +2,12 @@
 
 namespace Kopaing\SimpleLog\Trait;
 
+use Illuminate\Support\Str;
 use Kopaing\SimpleLog\Helpers\ActivityLogger;
 
 trait SimpleLog
 {
-  /**
+    /**
      * Boot the trait.
      *
      * This method registers a model event listener for creating, updating,
@@ -43,22 +44,30 @@ trait SimpleLog
         $event = strtolower($action);
         $status = 'success';
 
-       // Initialize properties array
+
+        // Get custom loggable columns if defined in the model
+        $loggableColumns = isset($model->loggable) ? $model->loggable : null;
+
+        // Determine which columns to log
+        $columnsToLog = $loggableColumns ?? $model->getFillable();
+
+
+        // Initialize properties array
         $properties = [];
 
         if ($action === 'Created') {
-            $properties['created_data'] = $model->toArray();
+            $properties['created_data'] =  $model->only($columnsToLog);
         }
-    
+
         if ($action === 'Updated') {
-            $properties['old'] = $model->getOriginal(); 
-            $properties['new'] = $model->getDirty(); 
+            $properties['old'] = array_intersect_key($model->getOriginal(), array_flip($columnsToLog));
+            $properties['new'] = array_intersect_key($model->getDirty(), array_flip($columnsToLog));
         }
 
         if ($action === 'Deleted') {
-            $properties['deleted_data'] = $model->toArray();
+            $properties['deleted_data'] = $model->only($columnsToLog);
         }
-    
+
         $activityLogger = new ActivityLogger($logName);
         $activityLogger->log($description)
                        ->event($event)
@@ -66,7 +75,7 @@ trait SimpleLog
                        ->properties($properties)
                        ->save();
     }
-    
+
 
     /**
      * Get the log name for the model.
@@ -76,7 +85,7 @@ trait SimpleLog
     protected function getLogName()
     {
         // Customize this method to return the desired log name for your model
-        return 'default';
+        return "{$this->getTable()}";
     }
 
     /**
@@ -87,7 +96,20 @@ trait SimpleLog
      */
     protected function getLogDescription($action)
     {
-        // Customize this method to return the desired log description for your model and action
-        return "{$action} a record";
+        // Get the model's singular table name (e.g., "task" from "tasks")
+        $modelName = ucfirst(Str::singular($this->getTable()));
+
+        // Generate a descriptive log message based on the action
+        switch ($action) {
+            case 'Created':
+                return "{$modelName} record was created";
+            case 'Updated':
+                return "{$modelName} record was updated";
+            case 'Deleted':
+                return "{$modelName} record was deleted";
+            default:
+                return "{$modelName} record was {$action}";
+        }
     }
+
 }
